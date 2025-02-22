@@ -1,0 +1,398 @@
+/storage/emulated/0/Files by Google/Compressed files/1088.ziphttps://sourceforge.net/p/g4p/code/ci/0d771b43762cf65cc60b0d83cf7e1810181b9c9e/https://sourceforge.net/p/g4p/code/ci/7f5229f66d4fac876366e70ca103d4c8d586f2c0/https://sourceforge.net/p/g4p/code/ci/feb98ec9cd738d0f98f7b275af24f9ebdb0f8973/G4P/ví dụ/G4P_ToolTipExplorer/G4P_ToolTipExplorer.pdeKhác biệtChuyển sang chế độ xem cạnh nhau
+--- a/G4P/ví dụ/G4P_ToolTipExplorer/G4P_ToolTipExplorer.pde
++++ b/G4P/ví dụ/G4P_ToolTipExplorer/G4P_ToolTipExplorer.pde
+@@ -1,6 +1,5 @@
+ nhập g4p_controls.*;
+  nhập java.awt.Font;
+-
+ 
+ /**
+  Chương trình này trình bày hai phương pháp để thiết lập vị trí của
+@@ -19,11 +18,8 @@
+ (c) 2024 Peter Lager
+  */
+ 
+-public void cài đặt() {
++public void thiết lập() {
+   kích thước (600, 480, JAVA2D);
+-}
+-
+-public void thiết lập() {
+   codefont = new Font("Courier", G4P.PLAIN, 15);
+    createGUI();
+    customGUI();
+@@ -36,10 +32,10 @@
+   nét vẽ (0, 0, 128);
+    trọng lượng nét vẽ (3);
+    tô (100, 255, 255);
++ hình chữ nhật(10, 10, 120, 160, 6);
+   hình chữ nhật(390, 10, 200, 150, 6);
+    hình chữ nhật(390, 170, 200, 150, 6);
+- hình chữ nhật(390, 330, 200, 40, 6);
+- hình chữ nhật(10, 10, 120, 160, 6);
++ hình chữ nhật(390, 330, 200, 60, 6);
+ }
+ công khai void drawTipShadow() {
+ 
+ @@ -82,6 +78,9 @@
+   nếu (!cbxKeepLevel.isSelected()) {
+      s.append("\nsdr.setTipHorz(false);");
+    }
++ nếu (!cbxEnableTip.isSelected()) {
++ s.append("\nsdr.setTipEnabled(sai);");
++ }		
+   tipPosSourceCode.setText(s.toString());
+  }
+ 
+@@ -95,6 +94,9 @@
+   nếu (!cbxKeepLevel.isSelected()) {
+      s.append("\nsdr.setTipHorz(false);");
+    }
++ nếu (!cbxEnableTip.isSelected()) {
++ s.append("\nsdr.setTipEnabled(sai);");
++ }
+   tipPosSourceCode.setText(s.toString());
+  }
+ 
+@@ -145,6 +147,24 @@
+     cập nhậtCompassStyle();
+    nếu không thì
+      cập nhậtRadialStyle();
++}
++
++public void enableTips(GCheckbox nguồn, sự kiện GEvent) {
++ sdr.setTipEnabled(nguồn.isSelected());
++ nếu (optCompass.isSelected())
++ cập nhậtCompassStyle();
++ khác
++ cập nhậtRadialStyle();
++}
++
++public void customGUI() {
++ knb.setTip("Xoay thanh trượt", 40, 1.5f * PI);
++ sdr.setTip("Điểm thi (%)", GAlign.CENTER, GAlign.NORTH, 0);
++ grpCompass = new GGroup(này);
++ grpCompass.addControls(listHorz, listVert, sdrGap, _alignment$, _gap$, lblGap);
++ grpRadial = new GGroup(này);
++ grpRadial.addControls(sdrRadDist, sdrRadAng, _radDist$, _angle$, lblRadDist, lblRadAng );
++ grpRadial.fadeTo(10, 200, 127);
+ }
+ công khai void createGUI() {
+ 
+ @@ -205,7 +225,6 @@
+   sdrRadDist.setNbrTicks(16);
+    sdrRadDist.setShowTicks(đúng);
+    sdrRadDist.setNumberFormat(G4P.INTEGER, 0);
+- //sdrRadDist.setOpaque(true);
+   sdrRadDist.addEventHandler(này, "radDistChange");
+    _angle$ = new GLabel(này, 400, 270, 140, 20);
+    _angle$.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+@@ -248,7 +267,6 @@
+   sdrGap.setNbrTicks(11);
+    sdrGap.setShowTicks(đúng);
+    sdrGap.setNumberFormat(G4P.INTEGER, 0);
+- //sdrGap.setOpaque(đúng);
+   sdrGap.addEventHandler(này, "changeGap");
+    lblGap = new GLabel(này, 400, 130, 40, 20);
+    lblGap.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+@@ -258,10 +276,16 @@
+   cbxKeepLevel = new GCheckbox(này, 400, 340, 180, 20);
+    cbxKeepLevel.setOpaque(đúng);
+    cbxKeepLevel.setText("Giữ mức tiền boa");
+- cbxKeepLevel.setSelected(useNativeSelect);
++ cbxKeepLevel.setSelected(đúng);
+   cbxKeepLevel.addEventHandler(điều này, "keepTipLevel");
+ 
+- tipPosSourceCode = new GLabel(this, 20, 420, 560, 50);
++ cbxEnableTip = new GCheckbox(này, 400, 360, 180, 20);
++ cbxEnableTip.setOpaque(đúng);
++ cbxEnableTip.setText("Bật công cụ SLIDER");
++ cbxEnableTip.setSelected(đúng);
++ cbxEnableTip.addEventHandler(điều này, "enableTips");
++
++ tipPosSourceCode = new GLabel(this, 20, 405, 560, 64);
+   tipPosSourceCode.setTextAlign(GAlign.LEFT, GAlign.CENTER);
+    tipPosSourceCode.setText(" ---- ");
+    tipPosSourceCode.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+@@ -273,15 +297,7 @@
+   optCompass.setSelected(đúng);
+  }
+ 
+-public void customGUI() {
+- knb.setTip("Xoay thanh trượt", 40, 1.5f * PI);
+- sdr.setTip("Điểm thi (%)", GAlign.CENTER, GAlign.NORTH, 0);
+- grpCompass = new GGroup(này);
+- grpCompass.addControls(listHorz, listVert, sdrGap, _alignment$, _gap$, lblGap);
+- grpRadial = new GGroup(này);
+- grpRadial.addControls(sdrRadDist, sdrRadAng, _radDist$, _angle$, lblRadDist, lblRadAng );
+- grpRadial.fadeTo(10, 200, 127);
+-}
++
+ 
+ GSlider sdr, sdrRadDist, sdrRadAng, sdrGap;
+  Nút vặn GKnob;
+@@ -289,7 +305,7 @@
+ GLabel _degrees$, _gap$, _radDist$, _angle$, _alignment$;
+  GButton rbtnResetAng;
+  GDropList listHorz, listVert;
+-GCheckbox cbxKeepLevel;
++GCheckbox cbxKeepLevel, cbxEnableTip;
+ GToggleGroup togStyle;
+  GOption optRadial, optCompass;
+  GGroup grpCompass, grpRadial;
+G4P/lib/changes.txtKhác biệtChuyển sang chế độ xem cạnh nhau
+--- a/G4P/lib/changes.txt
++++ b/G4P/lib/changes.txt
+@@ -1,4 +1,12 @@
+ Những thay đổi của G4P được tích hợp vào phiên bản
++
++4.3.11 (50)
++ Một nút bây giờ tạo ra sự kiện CLICKED nếu chuột được nhấn và thả khi ở trên nút, ngay cả khi chuột di chuyển (Vé 49)
++
++Có thể bật/tắt chú giải công cụ cho từng điều khiển với control.setTipEnabled(boolean)
++
++ Chuột không còn phải giữ nguyên trên thanh cuộn-ngón tay cái khi kéo lỗi khi kéo ngón tay cái trên thanh cuộn (Vé 55)
++
+ 
+ 4.3.10 (49)
+  Thuộc tính mặc định trong GAbstractClass được thay đổi thành quyền truy cập được bảo vệ để tạo điều kiện cho người dùng mở rộng các điều khiển hiện có để cung cấp chức năng khác nhau.
+G4P/src/g4p_controls/G4P.javaKhác biệtChuyển sang chế độ xem cạnh nhau
+--- a/G4P/src/g4p_controls/G4P.java
++++ b/G4P/src/g4p_controls/G4P.java
+@@ -1043,7 +1043,6 @@
+ 	 * @param messageType loại tin nhắn
+  	 */
+  	public static void showMessage(PApplet owner, String message, String title, int messageType) {
+-// Khung frame = getFrame(chủ sở hữu);
+ 		Chuỗi m;
+  		nếu (PApplet.platform == PApplet.MACOSX) {
+  			m = PANE_TEXT_STYLE_MACOS.replaceAll("@@TITLE@@", tiêu đề);
+@@ -1052,7 +1051,6 @@
+ 		} else {
+  			m = PANE_TEXT_STYLE_OTHER.replaceAll("@@MESSAGE@@", tin nhắn);
+  		}
+- // JOptionPane.showMessageDialog(khung, m, tiêu đề, messageType);
+ 		JOptionPane.showMessageDialog(null, m, tiêu đề, messageType);
+  	}
+ 
+G4P/src/g4p_controls/GAbstractControl.javaKhác biệtChuyển sang chế độ xem cạnh nhau
+--- a/G4P/src/g4p_controls/GAbstractControl.java
++++ b/G4P/src/g4p_controls/GAbstractControl.java
+@@ -360,7 +360,6 @@
+ 		float dx = (float) Math.cos(ang) * bán kính + halfWidth - tip.halfWidth;
+  		float dy = (float) Math.sin(ang) * bán kính + halfHeight - tip.halfHeight;
+  		tip.moveTo(dx, dy, GControlMode.CORNER);
+- //System.out.println(thẻ + " " + dx + " " + dy);
+ 		ẩnTip();
+  	}
+ 
+@@ -455,6 +454,14 @@
+ 	 */
+  	public void setTipText(String text) {
+  		nếu (tip != null) tip.setText(text);
++ }
++
++ /**
++ * Nếu điều khiển này có chú thích công cụ, hãy đặt trạng thái bật của nó.
++ * @param cho phép true để hiển thị mẹo, false để ẩn mẹo
++ */
++ public void setTipEnabled(boolean cho phép) {
++ nếu (tip != null) tip.setEnabled(bật);
+ 	}
+ 	/**
+ 
+ @@ -1439,7 +1446,7 @@
+ 	được bảo vệ void calcTransformedOrigin(float px, float py) {
+  		AffineTransform aff = new AffineTransform();
+  		aff = getTransform(aff);
+- nhiệt độ[0] = px;
++ nhiệt độ[0] = px;
+ 		temp[1] = py;
+  		thử {
+  			aff.inverseTransform(temp, 0, temp, 0, 1);
+@@ -1485,11 +1492,17 @@
+ 		public int compare(GAbstractControl c1, GAbstractControl c2) {
+  			nếu (c1.z != c2.z)
+  				trả về số nguyên mới(c1.z).compareTo(số nguyên mới(c2.z));
+- khác
+- trả về số nguyên mới((int) -c1.y).compareTo(số nguyên mới((int) -c2.y));
++			
++ Số nguyên y1 = Số nguyên mới((int) -c1.y), y2 = Số nguyên mới((int) -c2.y);
++ Số nguyên cmpY = y1.compareTo(y2);
++ nếu(cmpY != 0)
++ trả về cmpY;
++ Số nguyên x1 = số nguyên mới((int) -c1.x), x2 = số nguyên mới((int) -c2.x);
++ Số nguyên cmpX = x1.compareTo(x2);
++// PApplet.println(c1.tag, c2.tag, " cmpX # ", x1,x2,x1.compareTo(x2));
++ trả về cmpX;
+ 		}
+ 	} // kết thúc lớp so sánh
+ }
+ 
+  
+ -;
+\ Không có dòng mới ở cuối tệp
+G4P/src/g4p_controls/GButton.javaKhác biệtChuyển sang chế độ xem cạnh nhau
+--- a/G4P/src/g4p_controls/GButton.java
++++ b/G4P/src/g4p_controls/GButton.java
+@@ -265,11 +265,13 @@
+ 			}
+  			phá vỡ;
+  		trường hợp MouseEvent.RELEASE:
+- // nếu chuột đã di chuyển thì nhả tiêu điểm nếu không
+- // MOUSE_CLICKED sẽ xử lý nó
+ 			nếu (focusIsWith == this && kéo) {
+- nếu (reportAllButtonEvents)
+- fireEvent(điều này, GEvent.ĐÃ PHÁT HÀNH);
++ nếu (currSpot >= 0) // 4.3.11
++ fireEvent(điều này, GEvent.CLICKED);
++ nếu không {
++ nếu (reportAllButtonEvents)
++ fireEvent(này, GEvent.ĐÃ PHÁT HÀNH);
++ }
+ 				kéo = sai;
+  				mất tiêu điểm(cha);
+  				trạng thái = TẮT_KIỂM_SÁT;
+G4P/src/g4p_controls/GImageButton.javaKhác biệtChuyển sang chế độ xem cạnh nhau
+--- a/G4P/src/g4p_controls/GImageButton.java
++++ b/G4P/src/g4p_controls/GImageButton.java
+@@ -361,15 +361,12 @@
+ 			}
+  			phá vỡ;
+  		trường hợp MouseEvent.RELEASE:
+- // nếu chuột đã di chuyển thì nhả tiêu điểm nếu không
+- // MOUSE_CLICKED sẽ xử lý nó
+ 			nếu (focusIsWith == this && kéo) {
+  				nếu (currSpot >= 0)
+  					fireEvent(this, GEvent.CLICKED);
+  				nếu không {
+- nếu (reportAllButtonEvents) {
++ nếu (reportAllButtonEvents)
+ 						fireEvent(này, GEvent.ĐÃ PHÁT HÀNH);
+- }
+ 				}
+  				kéo = false;
+  				loseFocus(cha mẹ);
+G4P/src/g4p_controls/GScrollbar.javaKhác biệtChuyển sang chế độ xem cạnh nhau
+--- a/G4P/src/g4p_controls/GScrollbar.java
++++ b/G4P/src/g4p_controls/GScrollbar.java
+@@ -40,7 +40,7 @@
+ 	private static final int TRACK = 5;
+ 	protected float giá trị = 0,2f;
+ 
+ - chất độn phao được bảo vệ = .5f;
++ chất độn phao được bảo vệ = 0,5f;
+ 	boolean được bảo vệ autoHide = true;
+  	boolean được bảo vệ currOverThumb = false;
+  	boolean được bảo vệ isValueChanging = false;
+@@ -126,6 +126,9 @@
+ 		bufferInvalid = đúng;
+  	}
+ 
++ public void setFiller(float filler) {
++ this.filler = chất độn;
++ }
+ 	/**
+  	 * Lấy giá trị hiện tại của thanh cuộn
+  	 * 
+@@ -181,14 +184,14 @@
+ 			nếu (focusIsWith == this) {
+  				chuyển đổi (currSpot) {
+  				trường hợp 1:
+- giá trị -= 0,1f;
++ giá trị -= chất độn;
+ 					nếu (giá trị < 0)
+  						giá trị = 0;
+  					bufferInvalid = true;
+  					fireEvent(this, GEvent.CHANGED);
+  					ngắt;
+  				trường hợp 2:
+- giá trị += 0,1f;
++ giá trị += chất độn;
+ 					nếu (giá trị + chất độn > 1.0)
+  						giá trị = 1 - chất độn;
+  					bufferInvalid = true;
+@@ -219,7 +222,7 @@
+ 			}
+  			phá vỡ;
+  		trường hợp MouseEvent.DRAG:
+- nếu (focusIsWith == cái này && điểm == 10) {
++ nếu (focusIsWith == this ) { //&& spot == 10) {
+ 				float movement = ox - last_ox;
+  				last_ox = ox;
+  				float deltaV = movement / (chiều rộng - 32);
+@@ -235,7 +238,7 @@
+ 	}
+ 	boolean được bảo vệ isOverThumb(float px, float py) {
+ 
+ - float p = (px - 16) / (chiều rộng - 32);
++ float p = (px - 16) / (chiều rộng - 32); // vị trí dọc theo đường dẫn
+ 		boolean over = (p >= giá trị && p < giá trị + chất độn);
+  		return over;
+  	}
+@@ -275,7 +278,9 @@
+ 			buffer.rect(chiều rộng - 15, 1, 14,5f, chiều cao - 2, BÁN KÍNH GÓC, BÁN KÍNH GÓC, BÁN KÍNH GÓC, BÁN KÍNH GÓC);
+ 			// vẽ ngón tay cái
+ 
+ - float thumbWidth = (chiều rộng - 32) * chất độn;
++ //float thumbWidth = (chiều rộng - 32) * chất độn;
++ float thumbWidth = Math.max((chiều rộng - 32)* phần bổ sung, chiều cao) ;
++// System.out.println("Chiều rộng: " + chiều rộng + " Chiều cao: " + chiều cao + " Chiều rộng ngón tay cái: " + thumbWidth);
+ 			buffer.translate((chiều rộng - 32) * giá trị + 16, 0);
+  			nếu (currSpot == 10)
+  				buffer.fill(bảng màu[6].getRGB());
+G4P/src/g4p_controls/GToolTip.javaKhác biệtChuyển sang chế độ xem cạnh nhau
+--- a/G4P/src/g4p_controls/GToolTip.java
++++ b/G4P/src/g4p_controls/GToolTip.java
+@@ -128,7 +128,7 @@
+ 	}
+ 	công khai void draw() {
+ 
+ - nếu (!visible)
++ nếu (!visible || !enabled)
+ 			trả về;
+  		// cập nhật chú giải công cụ V4.3.9
+  		nếu (System.currentTimeMillis() - tiptime > showtime) {
+G4P/src/g4p_controls/GWindowImpl.javaKhác biệtChuyển sang chế độ xem cạnh nhau
+--- a/G4P/src/g4p_controls/GWindowImpl.java
++++ b/G4P/src/g4p_controls/GWindowImpl.java
+@@ -22,11 +22,9 @@
+ lớp công khai cuối cùng GWindowImpl triển khai GConstants, GConstantsInternal {
+ 	công khai LinkedList<GAbstractControl> windowControls = new LinkedList<GAbstractControl>();
+ 
+ - // Hai danh sách tiếp theo dành cho các điều khiển sẽ được thêm vào hoặc xóa đi vì
+- // những cái này
+- // các hành động phải được thực hiện bên ngoài chu kỳ vẽ để tránh đồng thời
+- // sửa đổi
+- // ngoại lệ khi thay đổi windowControls
++ // Hai danh sách tiếp theo dành cho các điều khiển cần thêm hoặc xóa
++ // vì những hành động này phải được thực hiện bên ngoài chu kỳ vẽ để tránh
++ // ngoại lệ sửa đổi đồng thời khi thay đổi windowControls
+ 	công khai LinkedList<GAbstractControl> đểXóa = mới LinkedList<GAbstractControl>();
+  	công khai LinkedList<GAbstractControl> đểThêm = mới LinkedList<GAbstractControl>();
+ 
+@@ -117,11 +115,14 @@
+ 		nếu (orgMatrix != null) { // && app.getGraphics().is3D()) {
+  			app.setMatrix(orgMatrix);
+  		}
+- đối với (điều khiển GAbstractControl : windowControls) {
++// Hệ thống.out.println("==============");
++ cho (điều khiển GAbstractControl : windowControls) {
++// System.out.print(control.tag + " # ");
+ 			nếu ((control.registeredMethods & DRAW_METHOD) == DRAW_METHOD) {
+  				control.draw();
+  			}
+  		}
++// System.out.println();
+ 		ứng dụng.popMatrix();
+  	}
+ 
+@@ -310,7 +311,6 @@
+ 				Bộ sưu tập.sort(windowControls, G4P.zorder);
+  			}
+  		}
+-
+ 	}
+ 	Chuỗi hành độngString(MouseEvent e) {
+ 
+ git clone https://git.code.sf.net/p/g4p/code g4p-code
